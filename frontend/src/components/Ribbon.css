@@ -1,0 +1,79 @@
+.ribbon {
+  flex-shrink: 0;
+  height: calc(var(--ribbon-h) + var(--safe-top));
+  padding-top: var(--safe-top);
+  background: linear-gradient(180deg, var(--bg-panel) 0%, rgba(18, 21, 28, 0.96) 100%);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+.ribbon-inner {
+  height: var(--ribbon-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem 0 1.25rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.ribbon-brand {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.ribbon-tabs {
+  display: flex;
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--border);
+}
+
+.ribbon-tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.ribbon-tab:hover {
+  color: var(--text);
+}
+
+.ribbon-tab--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px rgba(61, 139, 253, 0.35);
+}
+
+@media (max-width: 520px) {
+  .ribbon-inner {
+    flex-direction: column;
+    height: auto;
+    min-height: var(--ribbon-h);
+    padding: 0.5rem 0.75rem 0.65rem;
+    gap: 0.5rem;
+  }
+
+  .ribbon-tabs {
+    width: 100%;
+  }
+
+  .ribbon-tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
