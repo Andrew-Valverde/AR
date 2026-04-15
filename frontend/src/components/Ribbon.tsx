@@ -5,9 +5,11 @@ export type AppMode = "ar" | "chat";
 type RibbonProps = {
   mode: AppMode;
   onModeChange: (mode: AppMode) => void;
+  userDisplayName?: string;
+  onSignOut?: () => void;
 };
 
-export function Ribbon({ mode, onModeChange }: RibbonProps) {
+export function Ribbon({ mode, onModeChange, userDisplayName, onSignOut }: RibbonProps) {
   return (
     <header className="ribbon" role="tablist" aria-label="Main navigation">
       <div className="ribbon-inner">
@@ -31,6 +33,18 @@ export function Ribbon({ mode, onModeChange }: RibbonProps) {
           >
             AI chat
           </button>
+        </div>
+        <div className="ribbon-user">
+          {userDisplayName && onSignOut ? (
+            <>
+              <span className="ribbon-user-name" title={userDisplayName}>
+                {userDisplayName}
+              </span>
+              <button type="button" className="ribbon-sign-out" onClick={onSignOut}>
+                Sign out
+              </button>
+            </>
+          ) : null}
         </div>
       </div>
     </header>

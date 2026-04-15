@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Stylized network rack">
+  <rect width="1200" height="800" fill="#0b0f14"/>
+  <rect x="420" y="60" width="360" height="680" fill="#111827" rx="8" stroke="#1f2937" stroke-width="4"/>
+  <rect x="440" y="90" width="320" height="48" fill="#1e293b" rx="4"/>
+  <rect x="440" y="150" width="320" height="52" fill="#0f172a" rx="4"/>
+  <rect x="448" y="162" width="120" height="10" fill="#22c55e" opacity="0.7" rx="2"/>
+  <rect x="448" y="178" width="80" height="8" fill="#3b82f6" opacity="0.6" rx="2"/>
+  <rect x="440" y="214" width="320" height="56" fill="#1e293b" rx="4"/>
+  <rect x="448" y="228" width="200" height="12" fill="#f59e0b" opacity="0.55" rx="2"/>
+  <rect x="440" y="282" width="320" height="60" fill="#0f172a" rx="4"/>
+  <rect x="448" y="296" width="260" height="14" fill="#a855f7" opacity="0.45" rx="2"/>
+  <rect x="440" y="354" width="320" height="320" fill="#111827" rx="4"/>
+  <line x1="460" y1="400" x2="700" y2="620" stroke="#334155" stroke-width="3" opacity="0.7"/>
+  <line x1="520" y1="400" x2="760" y2="620" stroke="#334155" stroke-width="3" opacity="0.7"/>
+  <line x1="580" y1="400" x2="820" y2="620" stroke="#334155" stroke-width="3" opacity="0.7"/>
+  <rect x="500" y="640" width="200" height="36" fill="#1f2937" rx="4"/>
+  <circle cx="560" cy="658" r="6" fill="#ef4444" opacity="0.85"/>
+  <circle cx="600" cy="658" r="6" fill="#22c55e" opacity="0.85"/>
+</svg>

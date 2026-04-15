@@ -9,10 +9,10 @@
 
 .ribbon-inner {
   height: var(--ribbon-h);
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0 1rem 0 1.25rem;
   max-width: 1400px;
   margin: 0 auto;
@@ -24,6 +24,7 @@
   letter-spacing: -0.02em;
   color: var(--text);
   white-space: nowrap;
+  justify-self: start;
 }
 
 .ribbon-tabs {
@@ -57,17 +58,56 @@
   box-shadow: inset 0 0 0 1px rgba(61, 139, 253, 0.35);
 }
 
+.ribbon-user {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  justify-self: end;
+}
+
+.ribbon-user-name {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ribbon-sign-out {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.ribbon-sign-out:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
 @media (max-width: 520px) {
   .ribbon-inner {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     height: auto;
     min-height: var(--ribbon-h);
     padding: 0.5rem 0.75rem 0.65rem;
     gap: 0.5rem;
   }
 
+  .ribbon-brand {
+    justify-self: center;
+  }
+
   .ribbon-tabs {
     width: 100%;
+    justify-self: stretch;
   }
 
   .ribbon-tab {
@@ -75,5 +115,15 @@
     text-align: center;
     padding: 0.5rem 0.5rem;
     font-size: 0.75rem;
+  }
+
+  .ribbon-user {
+    width: 100%;
+    justify-self: stretch;
+    justify-content: space-between;
+  }
+
+  .ribbon-user-name {
+    max-width: 60%;
   }
 }

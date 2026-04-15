@@ -1,0 +1,112 @@
+{
+  "examples": [
+    {
+      "id": "assembly-line",
+      "label": "Assembly line",
+      "description": "Pre-built scan for an industrial conveyor scene.",
+      "image": "/demo/assembly-line.svg",
+      "insights": [
+        {
+          "id": "al-1",
+          "title": "Conveyor tracking",
+          "detail": "Belt axis aligned within ±1.5° · throughput lane clear",
+          "tone": "success",
+          "style": { "top": "14%", "left": "8%", "maxWidth": "min(230px, 44vw)" }
+        },
+        {
+          "id": "al-2",
+          "title": "Safety zone",
+          "detail": "Guard rail continuous · no occlusion on left approach",
+          "tone": "info",
+          "style": { "top": "36%", "right": "7%", "maxWidth": "min(210px, 40vw)" }
+        },
+        {
+          "id": "al-3",
+          "title": "Lighting variance",
+          "detail": "Overhead LEDs uneven · mild shadow band mid-frame",
+          "tone": "warning",
+          "style": { "bottom": "26%", "left": "12%", "maxWidth": "min(240px, 52vw)" }
+        },
+        {
+          "id": "al-4",
+          "title": "Pick window",
+          "detail": "Robot envelope OK · next cycle ETA ~4.2 s",
+          "tone": "info",
+          "style": { "bottom": "12%", "right": "9%", "maxWidth": "min(200px, 45vw)" }
+        }
+      ]
+    },
+    {
+      "id": "office-workspace",
+      "label": "Office workspace",
+      "description": "Pre-built scan for a desk and daylight interior.",
+      "image": "/demo/office-workspace.svg",
+      "insights": [
+        {
+          "id": "ow-1",
+          "title": "Horizon / walls",
+          "detail": "Verticals plumb · perspective consistent with 28 mm equiv.",
+          "tone": "success",
+          "style": { "top": "16%", "left": "10%", "maxWidth": "min(220px, 42vw)" }
+        },
+        {
+          "id": "ow-2",
+          "title": "Display glare",
+          "detail": "Monitor hotspot upper-left · suggest polarizer or tilt",
+          "tone": "warning",
+          "style": { "top": "40%", "right": "8%", "maxWidth": "min(230px, 46vw)" }
+        },
+        {
+          "id": "ow-3",
+          "title": "Cable routing",
+          "detail": "Primary bundle visible under desk · strain relief OK",
+          "tone": "info",
+          "style": { "bottom": "30%", "left": "14%", "maxWidth": "min(220px, 50vw)" }
+        },
+        {
+          "id": "ow-4",
+          "title": "Occupancy hint",
+          "detail": "Chair present · desk surface clutter score 0.32 (low)",
+          "tone": "info",
+          "style": { "bottom": "14%", "right": "11%", "maxWidth": "min(210px, 48vw)" }
+        }
+      ]
+    },
+    {
+      "id": "network-rack",
+      "label": "Network rack",
+      "description": "Pre-built scan for a compact equipment rack.",
+      "image": "/demo/network-rack.svg",
+      "insights": [
+        {
+          "id": "nr-1",
+          "title": "Rack U spacing",
+          "detail": "Mount holes regular · detected 12U usable height",
+          "tone": "success",
+          "style": { "top": "12%", "left": "9%", "maxWidth": "min(225px, 43vw)" }
+        },
+        {
+          "id": "nr-2",
+          "title": "Thermal",
+          "detail": "Warm exhaust plume lower third · verify aisle airflow",
+          "tone": "warning",
+          "style": { "top": "52%", "right": "6%", "maxWidth": "min(215px, 42vw)" }
+        },
+        {
+          "id": "nr-3",
+          "title": "Cable dress",
+          "detail": "Vertical manager present · cross-rack jumpers tidy",
+          "tone": "success",
+          "style": { "bottom": "22%", "left": "11%", "maxWidth": "min(235px, 54vw)" }
+        },
+        {
+          "id": "nr-4",
+          "title": "Asset tags",
+          "detail": "3 readable labels · confidence avg 0.88",
+          "tone": "info",
+          "style": { "bottom": "10%", "right": "10%", "maxWidth": "min(200px, 46vw)" }
+        }
+      ]
+    }
+  ]
+}

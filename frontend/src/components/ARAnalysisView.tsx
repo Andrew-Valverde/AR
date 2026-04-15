@@ -9,7 +9,7 @@ import {
 import { ARInsightModals, type ARInsight } from "./ARInsightModals";
 import "./ARAnalysisView.css";
 
-const MOCK_INSIGHTS: ARInsight[] = [
+const DEFAULT_UPLOAD_INSIGHTS: ARInsight[] = [
   {
     id: "1",
     title: "Surface plane",
@@ -19,7 +19,7 @@ const MOCK_INSIGHTS: ARInsight[] = [
   },
   {
     id: "2",
-    title: "uigvfiugf iuyfbiuy",
+    title: "Depth regions",
     detail: "3 distinct regions · nearest ~1.2 m",
     tone: "success",
     style: { top: "38%", right: "6%", maxWidth: "min(200px, 40vw)" },
@@ -40,9 +40,78 @@ const MOCK_INSIGHTS: ARInsight[] = [
   },
 ];
 
-export function ARAnalysisView() {
+type DemoExample = {
+  id: string;
+  label: string;
+  description: string;
+  image: string;
+  insights: ARInsight[];
+};
+
+type DemoExamplesFile = {
+  examples: DemoExample[];
+};
+
+function isTone(v: unknown): v is ARInsight["tone"] {
+  return v === "info" || v === "success" || v === "warning";
+}
+
+function parseDemoExamples(raw: unknown): DemoExample[] {
+  if (!raw || typeof raw !== "object") return [];
+  const ex = (raw as DemoExamplesFile).examples;
+  if (!Array.isArray(ex)) return [];
+  const out: DemoExample[] = [];
+  for (const row of ex) {
+    if (!row || typeof row !== "object") continue;
+    const r = row as Record<string, unknown>;
+    if (typeof r.id !== "string" || typeof r.label !== "string" || typeof r.image !== "string")
+      continue;
+    const description = typeof r.description === "string" ? r.description : "";
+    const insightsIn = Array.isArray(r.insights) ? r.insights : [];
+    const insights: ARInsight[] = [];
+    for (const ins of insightsIn) {
+      if (!ins || typeof ins !== "object") continue;
+      const i = ins as Record<string, unknown>;
+      if (
+        typeof i.id !== "string" ||
+        typeof i.title !== "string" ||
+        typeof i.detail !== "string" ||
+        !isTone(i.tone) ||
+        !i.style ||
+        typeof i.style !== "object"
+      ) {
+        continue;
+      }
+      insights.push({
+        id: i.id,
+        title: i.title,
+        detail: i.detail,
+        tone: i.tone,
+        style: i.style as ARInsight["style"],
+      });
+    }
+    if (!insights.length) continue;
+    out.push({
+      id: r.id,
+      label: r.label,
+      description,
+      image: r.image,
+      insights,
+    });
+  }
+  return out;
+}
+
+type ARAnalysisViewProps = {
+  username: string;
+};
+
+export function ARAnalysisView({ username }: ARAnalysisViewProps) {
+  const showGuidedDemos = username.trim().toLowerCase() === "demo";
+
   const fileInputId = useId();
   const captureInputId = useId();
+  const demosSectionId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const captureRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -51,17 +120,63 @@ export function ARAnalysisView() {
   const [cameraVideoReady, setCameraVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const cameraStreamRef = useRef<MediaStream | null>(null);
+  const imageUrlRef = useRef<string | null>(null);
+
+  const [demoExamples, setDemoExamples] = useState<DemoExample[]>([]);
+  const [demosLoadError, setDemosLoadError] = useState<string | null>(null);
+  const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
+  const [scanInsights, setScanInsights] = useState<ARInsight[]>(DEFAULT_UPLOAD_INSIGHTS);
+
+  const setImageFromHref = useCallback((href: string) => {
+    setImageUrl((prev) => {
+      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+      return href;
+    });
+  }, []);
 
   const revokeAndSetUrl = useCallback((file: File | null) => {
     setImageUrl((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
+      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
       return file ? URL.createObjectURL(file) : null;
     });
   }, []);
 
+  useEffect(() => {
+    if (!showGuidedDemos) {
+      setDemoExamples([]);
+      setDemosLoadError(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/demo-examples.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        if (!cancelled) {
+          setDemoExamples(parseDemoExamples(json));
+          setDemosLoadError(null);
+        }
+      } catch {
+        if (!cancelled) {
+          setDemoExamples([]);
+          setDemosLoadError("Could not load guided demos (demo-examples.json).");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [showGuidedDemos]);
+
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
-    if (f) revokeAndSetUrl(f);
+    if (f) {
+      revokeAndSetUrl(f);
+      setActiveExampleId(null);
+      setScanInsights(DEFAULT_UPLOAD_INSIGHTS);
+      setArActive(false);
+    }
     e.target.value = "";
   };
 
@@ -97,6 +212,17 @@ export function ARAnalysisView() {
     };
   }, [stopCameraStream]);
 
+  useEffect(() => {
+    imageUrlRef.current = imageUrl;
+  }, [imageUrl]);
+
+  useEffect(() => {
+    return () => {
+      const u = imageUrlRef.current;
+      if (u?.startsWith("blob:")) URL.revokeObjectURL(u);
+    };
+  }, []);
+
   const openCamera = async () => {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       captureRef.current?.click();
@@ -130,11 +256,21 @@ export function ARAnalysisView() {
           type: "image/jpeg",
         });
         revokeAndSetUrl(file);
+        setActiveExampleId(null);
+        setScanInsights(DEFAULT_UPLOAD_INSIGHTS);
+        setArActive(false);
         closeCameraModal();
       },
       "image/jpeg",
       0.92,
     );
+  };
+
+  const selectDemo = (ex: DemoExample) => {
+    setImageFromHref(ex.image);
+    setActiveExampleId(ex.id);
+    setScanInsights(ex.insights);
+    setArActive(false);
   };
 
   const startAR = () => {
@@ -189,6 +325,39 @@ export function ARAnalysisView() {
         </div>
       )}
 
+      {showGuidedDemos && (
+        <div className="ar-demos" role="region" aria-labelledby={demosSectionId}>
+          <div className="ar-demos-header">
+            <p id={demosSectionId} className="ar-demos-title">
+              Guided demos
+            </p>
+            <p className="ar-demos-caption">
+              Pre-selected scenes from <code className="ar-demos-code">demo-examples.json</code>{" "}
+              — load an image, then run <strong>Start AR check</strong> to see matched overlays.
+            </p>
+          </div>
+          {demosLoadError && <p className="ar-demos-error">{demosLoadError}</p>}
+          <div className="ar-demos-row">
+            {demoExamples.map((ex) => (
+              <button
+                key={ex.id}
+                type="button"
+                className={`ar-demo-card ${activeExampleId === ex.id ? "ar-demo-card--active" : ""}`}
+                onClick={() => selectDemo(ex)}
+              >
+                <span className="ar-demo-thumb-wrap">
+                  <img src={ex.image} alt="" className="ar-demo-thumb" />
+                </span>
+                <span className="ar-demo-label">{ex.label}</span>
+                {ex.description ? (
+                  <span className="ar-demo-desc">{ex.description}</span>
+                ) : null}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="ar-canvas">
         {imageUrl ? (
           <img src={imageUrl} alt="Scene for AR analysis" className="ar-image" />
@@ -196,8 +365,17 @@ export function ARAnalysisView() {
           <div className="ar-placeholder">
             <p className="ar-placeholder-title">No image yet</p>
             <p className="ar-placeholder-hint">
-              Add a photo from your library or capture one with the camera. The whole area below the
-              ribbon is your workspace.
+              {showGuidedDemos ? (
+                <>
+                  Pick a guided demo above, add a photo from your library, or capture one with the
+                  camera.
+                </>
+              ) : (
+                <>
+                  Add a photo from your library or capture one with the camera. The whole area below
+                  the ribbon is your workspace.
+                </>
+              )}
             </p>
           </div>
         )}
@@ -205,7 +383,7 @@ export function ARAnalysisView() {
         {arActive && imageUrl && (
           <>
             <div className="ar-scanline" aria-hidden />
-            <ARInsightModals insights={MOCK_INSIGHTS} onDismiss={dismissAR} />
+            <ARInsightModals insights={scanInsights} onDismiss={dismissAR} />
           </>
         )}
       </div>

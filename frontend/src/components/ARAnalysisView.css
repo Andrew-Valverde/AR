@@ -6,6 +6,122 @@
   background: #050608;
 }
 
+.ar-demos {
+  flex-shrink: 0;
+  padding: 0.65rem 1rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(18, 21, 28, 0.98) 0%, rgba(10, 12, 16, 0.96) 100%);
+}
+
+.ar-demos-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.ar-demos-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+.ar-demos-caption {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  max-width: 720px;
+}
+
+.ar-demos-caption strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ar-demos-code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  padding: 0.08rem 0.3rem;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.ar-demos-error {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  color: #fecaca;
+}
+
+.ar-demos-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.ar-demo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: min(200px, 42vw);
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.ar-demo-card:hover {
+  border-color: rgba(61, 139, 253, 0.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.ar-demo-card:active {
+  transform: scale(0.99);
+}
+
+.ar-demo-card--active {
+  border-color: rgba(61, 139, 253, 0.55);
+  box-shadow: 0 0 0 1px rgba(61, 139, 253, 0.35);
+}
+
+.ar-demo-thumb-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--border);
+}
+
+.ar-demo-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ar-demo-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ar-demo-desc {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
 .ar-canvas {
   flex: 1;
   min-height: 0;
