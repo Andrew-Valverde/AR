@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Andrew-Valverde/AR#readme",
+  "bugs": {
+    "url": "https://github.com/Andrew-Valverde/AR/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andrew-Valverde/AR.git"
+  },
+  "license": "MIT",
+  "author": "moiCR",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/adapter-pg": "^7.7.0",
+    "@prisma/client": "^7.7.0",
+    "argon2": "^0.44.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jose": "^6.2.2",
+    "pg": "^8.20.0"
+  },
+  "overrides": {
+    "@hono/node-server": "^1.19.13"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "prisma": "^7.7.0"
+  }
+}
