@@ -99,7 +99,7 @@ export function LoginScreen({ onAuthenticated }: LoginScreenProps) {
     <div className="login-screen">
       <div className="login-card">
         <h1 className="login-title">AR Lookup</h1>
-        <p className="login-subtitle">Sign in to continue. Credentials are loaded from auth.json.</p>
+        <p className="login-subtitle">Sign in to continue</p>
 
         {loadError && <p className="login-banner login-banner--error">{loadError}</p>}
 
