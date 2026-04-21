@@ -29,7 +29,20 @@ export default function App() {
         mode={mode}
         onModeChange={setMode}
         userDisplayName={session.displayName}
-        onSignOut={() => {
+        onSignOut={async () => {
+          const token = sessionStorage.getItem("ar_auth_token");
+          if (token) {
+            try {
+              await fetch("/api/auth/logout", {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${token}`
+                }
+              });
+            } catch (e) {
+              console.error("Logout error", e);
+            }
+          }
           clearSession();
           setSession(null);
         }}

@@ -126,6 +126,8 @@ export function ARAnalysisView({ username }: ARAnalysisViewProps) {
   const [demosLoadError, setDemosLoadError] = useState<string | null>(null);
   const [activeExampleId, setActiveExampleId] = useState<string | null>(null);
   const [scanInsights, setScanInsights] = useState<ARInsight[]>(DEFAULT_UPLOAD_INSIGHTS);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const setImageFromHref = useCallback((href: string) => {
     setImageUrl((prev) => {
@@ -273,9 +275,49 @@ export function ARAnalysisView({ username }: ARAnalysisViewProps) {
     setArActive(false);
   };
 
-  const startAR = () => {
-    if (!imageUrl) return;
-    setArActive(true);
+  const startAR = async () => {
+    if (!imageUrl || analyzing) return;
+    
+    // If it's a pre-analyzed demo, we don't necessarily need to re-upload.
+    // But since you asked to connect it, we can just display the active demo's insights
+    // or upload it. The original code set active example insights immediately on selectDemo.
+    if (activeExampleId) {
+      setArActive(true);
+      return;
+    }
+
+    setAnalyzing(true);
+    setAnalysisError(null);
+    setArActive(false);
+
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      
+      const formData = new FormData();
+      formData.append("image", blob, "image.jpg");
+
+      const uploadRes = await fetch("/api/analyzer/scan", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error("Analysis failed on the server.");
+      }
+
+      const data = await uploadRes.json();
+      
+      if (data && Array.isArray(data.insights)) {
+        setScanInsights(data.insights);
+      }
+      setArActive(true);
+    } catch (err) {
+      console.error("AR Analysis error:", err);
+      setAnalysisError("Could not analyze the image. Please try again.");
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const dismissAR = () => setArActive(false);
@@ -418,13 +460,19 @@ export function ARAnalysisView({ username }: ARAnalysisViewProps) {
           Use camera
         </button>
 
+        {analysisError && (
+          <p className="ar-demos-error" style={{ textAlign: "center", marginBottom: "1rem" }}>
+            {analysisError}
+          </p>
+        )}
+
         <button
           type="button"
           className="ar-btn ar-btn--primary"
-          disabled={!imageUrl}
+          disabled={!imageUrl || analyzing}
           onClick={startAR}
         >
-          Start AR check
+          {analyzing ? "Analyzing..." : "Start AR check"}
         </button>
 
         {arActive && (
