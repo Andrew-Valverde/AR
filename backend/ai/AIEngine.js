@@ -8,7 +8,7 @@ class AIEngine {
         }
 
         this.status = "Idle";
-        this.version = "gemini-1.5-flash";
+        this.version = "gemini-2.5-flash";
         this.genAI = new GoogleGenerativeAI(apiKey);
     }
 
@@ -34,7 +34,7 @@ class AIEngine {
             const prompt = `
                 You are an AR / industrial scene analyst. The user message may include an image and optional metadata.
                 
-                Your task: infer a concise scan summary and 4 insight callouts that could plausibly be shown as floating labels on the image. For each callout, you must identify 4 specific buckets: 1) Main object, 2) What it is, 3) Slight historic info, and 4) "Algo mas" (extra detail/trivia).
+                Your task: infer a concise scan summary and 4 insight callouts that could plausibly be shown as floating labels on the image. For each callout, you must identify 4 specific buckets: 1) Main object, 2) What it is, 3) Slight historic info, and 4) Extra detail/trivia.
                 
                 OUTPUT RULES (strict):
                 1) Return exactly ONE JSON object. No markdown, no code fences, no text before or after the JSON.
@@ -69,6 +69,8 @@ class AIEngine {
                 If the user did not supply an image, return:
                 {"error":"no_image"}
                 as the entire response (still raw JSON only).
+
+                Return the response in spanish
             `;
             
             const imagePart = this._fileToGenerativePart(filePath, mimeType);
@@ -89,19 +91,24 @@ class AIEngine {
 
     async Chat(userMessage, history = [], knowledgeContext = null) {
         try {
-            const model = this.genAI.getGenerativeModel({ model: this.version });
-
-            const systemInstruction = `You are an expert AR industrial assistant. 
+            const systemInstructionText = `You are an expert AR industrial assistant. 
                 You help operators understand objects detected in industrial scenes — providing safety tips, maintenance advice, historical context, and operational guidance.
                 Always be concise and practical. Respond in the same language the user writes in.
                 ${knowledgeContext ? `\nRelevant knowledge base context:\n${knowledgeContext}` : ''}`;
+
+            const model = this.genAI.getGenerativeModel({ 
+                model: this.version,
+                systemInstruction: {
+                    role: "system",
+                    parts: [{ text: systemInstructionText }]
+                }
+            });
 
             const chat = model.startChat({
                 history: history.map(turn => ({
                     role: turn.role,
                     parts: [{ text: turn.parts }]
-                })),
-                systemInstruction
+                }))
             });
 
             const result = await chat.sendMessage(userMessage);

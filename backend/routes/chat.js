@@ -18,7 +18,7 @@ router.post('/message', async (req, res) => {
 
     try {
         const pastMessages = await prisma.chatHistory.findMany({
-            where:   { usuarioId: userId },
+            where:   { userId: userId },
             orderBy: { createdAt: 'asc' }
         });
 
@@ -43,7 +43,7 @@ router.post('/message', async (req, res) => {
             data: {
                 userText:   message,
                 aiResponse: aiResponse,
-                usuarioId:  userId
+                userId:  userId
             }
         });
 
@@ -65,7 +65,7 @@ router.get('/history', async (req, res) => {
 
     try {
         const history = await prisma.chatHistory.findMany({
-            where:   { usuarioId: userId },
+            where:   { userId: userId },
             orderBy: { createdAt: 'asc' }
         });
 
@@ -82,7 +82,7 @@ router.delete('/history', async (req, res) => {
 
     try {
         const { count } = await prisma.chatHistory.deleteMany({
-            where: { usuarioId: userId }
+            where: { userId: userId }
         });
 
         console.log(`Cleared ${count} chat messages for user ${userId}`);
@@ -103,7 +103,7 @@ router.delete('/history/:id', async (req, res) => {
         const message = await prisma.chatHistory.findUnique({ where: { id } });
 
         if (!message) return res.status(404).json({ error: 'Message not found.' });
-        if (message.usuarioId !== userId) return res.status(403).json({ error: 'Forbidden.' });
+        if (message.userId !== userId) return res.status(403).json({ error: 'Forbidden.' });
 
         await prisma.chatHistory.delete({ where: { id } });
         res.json({ message: 'Message deleted.' });

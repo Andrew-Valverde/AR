@@ -9,7 +9,6 @@ const router = express.Router();
 const secretString = process.env.JWT_KEY || '6c7c5ebddf6230c39ddd0b12d2facb272977d45939cbae51528f69426d339b58';
 const secretKey = new TextEncoder().encode(secretString);
 
-// ─── Register ────────────────────────────────────────────────────────────────
 router.post('/register', async (req, res) => {
     const { name, lastName, userName, email, password } = req.body;
 
@@ -18,7 +17,7 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        const existing = await prisma.usuarios.findFirst({
+        const existing = await prisma.users.findFirst({
             where: { OR: [{ email }, { userName }] }
         });
 
@@ -28,7 +27,7 @@ router.post('/register', async (req, res) => {
 
         const hashedPassword = await argon2.hash(password);
 
-        const user = await prisma.usuarios.create({
+        const user = await prisma.users.create({
             data: { name, lastName, userName, email, password: hashedPassword }
         });
 
@@ -48,7 +47,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// ─── Login ───────────────────────────────────────────────────────────────────
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -59,7 +57,7 @@ router.post('/login', async (req, res) => {
     console.log(`Login attempt for: ${email}`);
 
     try {
-        const user = await prisma.usuarios.findFirst({ where: { email } });
+        const user = await prisma.users.findFirst({ where: { email } });
 
         if (!user) {
             return res.status(401).json({ error: "Invalid credentials." });
@@ -87,7 +85,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// ─── Verify Token (middleware) ────────────────────────────────────────────────
 const verifyToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -104,12 +101,11 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
-// ─── Me ──────────────────────────────────────────────────────────────────────
 router.get('/me', verifyToken, async (req, res) => {
     try {
         console.log(`Fetching profile for user ID: ${req.user.userId}`);
 
-        const user = await prisma.usuarios.findUnique({
+        const user = await prisma.users.findUnique({
             where: { id: req.user.userId },
             select: {
                 id: true,
