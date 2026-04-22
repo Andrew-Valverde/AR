@@ -1,0 +1,81 @@
+# -----------------------------------------------------------------------------
+# DRAFT / UNIVERSITY EXAMPLE ONLY
+# This workflow demonstrates how a CI pipeline *could* look before uploading
+# artifacts to AWS. It does NOT configure credentials or call the AWS API.
+#
+# In a real project you would typically:
+#   1. Store AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (or OIDC role) in GitHub Secrets
+#   2. Use aws-actions/configure-aws-credentials@v4
+#   3. Run aws s3 sync, aws ecs update-service, SAM/CDK deploy, etc.
+# -----------------------------------------------------------------------------
+
+name: Draft — build (simulated AWS deploy)
+
+on:
+  # Manual trigger avoids surprise runs while this remains a classroom draft.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-simulate-deploy:
+    runs-on: ubuntu-latest
+    # Example: pin region the way a real deploy job often does.
+    env:
+      AWS_REGION: us-east-1
+      # Placeholder bucket name for documentation only — not used by any AWS call.
+      EXAMPLE_S3_BUCKET: draft-arlookup-frontend-static
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies and build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: "(Simulation) Would configure AWS credentials"
+        run: |
+          echo "In production, a step would run something like:"
+          echo "  uses: aws-actions/configure-aws-credentials@v4"
+          echo "  with:"
+          echo "    aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "    aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          echo "    aws-region: $AWS_REGION"
+          echo "This draft workflow intentionally skips that step."
+
+      - name: "(Simulation) Would upload static site to S3"
+        run: |
+          echo "Example command that a real pipeline might run after build:"
+          echo "  aws s3 sync frontend/dist s3://$EXAMPLE_S3_BUCKET/ --delete"
+          echo "Artifact is only on the runner here; nothing is uploaded in this draft."
+
+      - name: "(Simulation) Would invalidate CloudFront cache"
+        run: |
+          echo "After an S3 deploy, you often invalidate the CDN distribution, e.g.:"
+          echo "  aws cloudfront create-invalidation --distribution-id E1234567890ABC \\"
+          echo "    --paths '/*'"
+          echo "Skipped for this university example."
+
+      # -----------------------------------------------------------------------
+      # Optional: uncomment and add secrets if you later turn this into a real deploy.
+      # - name: Configure AWS credentials (real)
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
+      #
+      # - name: Upload to S3 (real)
+      #   run: aws s3 sync frontend/dist s3://your-bucket-name/ --delete
+      # -----------------------------------------------------------------------
