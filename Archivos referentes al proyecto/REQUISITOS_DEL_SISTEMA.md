@@ -99,5 +99,3 @@ En este repositorio hay un ejemplo de flujo en **GitHub Actions** (borrador educ
 
 - **Local:** Git, Node.js LTS, npm, PostgreSQL (Docker recomendado), archivo `backend/.env` completo, puertos libres para Vite, API y base de datos.  
 - **Producción:** hosting para frontend, backend y PostgreSQL; secretos fuera del código; HTTPS; y, si se usa CI/CD, configuración del flujo más credenciales seguras en el proveedor de Git o de nube.
-
-Si el curso solo pide un **borrador** o **prototipo**, basta con demostrar desarrollo local y un **ejemplo** de pipeline (como el workflow de simulación); un despliegue real completo es un paso adicional que depende del presupuesto y de la política de la institución o del cliente.
